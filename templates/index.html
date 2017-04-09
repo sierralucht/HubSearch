@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>HubSearch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 col-lg-offset-4">
+            <h1 class="text-center">Welcome to HubSearch!</h1>
+        </div>
+      </div>
+      <br/>
+      {% if message %}
+        <div class="row">
+            <div class="form-group col-lg-4 col-lg-offset-4">
+                <p class="error"><strong>Message:</strong> {{ message }}</p>
+            </div>
+        </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
