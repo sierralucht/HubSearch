@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request
 from github import Github
 
 app = Flask(__name__)
-app.secret_key = "changememememe"
+app.secret_key = "changenonononono"
 
 
 def read_credentials():
