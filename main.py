@@ -6,7 +6,7 @@ with open("../p.txt", "r") as f:
     user = lines[0].strip()
     pw = lines[1].strip()
 
-g = Github("nwalsh1995", pw)
+g = Github(user, pw)
 
 for repo in g.get_user().get_repos():
     print repo.name
