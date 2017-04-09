@@ -36,9 +36,9 @@ def insert_code(code, conn):
     c.close()
 
 
-def get_code(conn):
+def get_code(conn, limit=1000):
     c = conn.cursor()
-    c.execute('''SELECT * from search ORDER BY watchers DESC''')
+    c.execute('''SELECT * from search ORDER BY watchers DESC LIMIT ?''', (limit,))
     results = c.fetchall()
     c.close()
 
@@ -79,6 +79,7 @@ def search_code(g, limit=500):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     user, pw = read_credentials()
+    code = []
     try:
         g = Github(user, pw)
         conn = create_database()
@@ -87,11 +88,11 @@ def index():
             for instance in most_popular[key]:
                 insert_code(instance, conn)
 
-        message = "Logged in"
-    except:
-        message = "Failure to login"
+        code = get_code(conn)
+    except Exception as e:
+        message = str(e)
 
-    return render_template('index.html', message=message)
+    return render_template('index.html', message=message, code=code)
 
 if __name__ == "__main__":
     app.run()
