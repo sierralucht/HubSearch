@@ -3,6 +3,9 @@ from github import Github
 import sqlite3
 import base64
 
+username = "CHANGEME"
+password = "CHANGEME"
+
 app = Flask(__name__)
 app.secret_key = "changenonononono"
 
@@ -80,10 +83,11 @@ def search_code(g, limit=500):
 def index():
     user, pw = read_credentials()
     code = []
+    message=''
     try:
         g = Github(user, pw)
         conn = create_database()
-        most_popular = search_code(g, limit=500)
+        most_popular = search_code(g, limit=10)
         for key in most_popular:
             for instance in most_popular[key]:
                 insert_code(instance, conn)

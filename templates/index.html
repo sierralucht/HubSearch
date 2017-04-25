@@ -8,7 +8,12 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-4 col-lg-offset-4">
-            <h1 class="text-center">Welcome to HubSearch!</h1>
+            <h1 class="text-center">
+              <font size="32" color="#5cb85c">HubSearch</font>
+            </h1>
+            <p class="text-center">
+              <font color="red">The easy way to search GitHub for open redirection vulnerabilities</font>
+            </p>
         </div>
       </div>
       <br/>
@@ -19,6 +24,28 @@
             </div>
         </div>
       {% endif %}
+      <br/>
+      <div class="row">
+          <div class="form-group col-lg-4 col-lg-offset-4">
+              <p class="text-center">
+              <font color="red", size="5">Results:</font>
+            </p>
+          </div>
+      </div>
+      {% for i in code %}
+        <div class="row">
+            <div class="form-group col-lg-4 col-lg-offset-4">
+                <p class="error"><strong>
+                    <a href="{{ i[2] }}">{{ i[2] }}</a>
+                </strong></p>
+                <p class="error"><pre><code> {{ i[1] }}</code></pre></p>
+                <button class="btn btn-danger" type="button"><span class="Text">False Positive<br></span></button>
+                <button class="btn btn-success" type="button"><span class="Text">Vulnerable<br></span></button>
+                <br/>
+                <br/>
+            </div>
+        </div>
+      {% endfor %}
     </div>
   </body>
 </html>
