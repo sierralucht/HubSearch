@@ -42,7 +42,7 @@ def insert_code(code, conn):
 
 def get_code(conn, limit=1000):
     c = conn.cursor()
-    c.execute('''SELECT * from search ORDER BY watchers DESC LIMIT ?''', (limit,))
+    c.execute('''SELECT * from search WHERE positive != -1 ORDER BY watchers DESC LIMIT ?''', (limit,))
     results = c.fetchall()
     c.close()
 
@@ -64,13 +64,18 @@ def search_code(g, limit=500):
     most_popular = {}
     try:
         for code in set(l[:limit]):
+            print code.name, code.git_url
             if any(s in code.html_url.lower() for s in BLACKLIST):
                 continue
             if code.repository.stargazers_count + code.repository.watchers not in most_popular:
                 most_popular[code.repository.stargazers_count + code.repository.watchers] = [code]
             else:
                 most_popular[code.repository.stargazers_count + code.repository.watchers].append(code)
-            sleep(.5)
+
+            for key in most_popular:
+                for instance in most_popular[key]:
+                    insert_code(instance, conn)
+            sleep(2)
     except Exception as e:
         print str(e)
         print g.get_rate_limit()
@@ -81,6 +86,16 @@ def search_code(g, limit=500):
     return most_popular
 
 
+def mark_fp(url):
+    c = conn.cursor()
+    c.execute('''UPDATE search SET positive=-1 WHERE url=?''', (url,))
+    conn.commit()
+
+    return True
+
+conn = create_database()
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     user, pw = read_credentials()
@@ -88,8 +103,8 @@ def index():
     message=''
     try:
         g = Github(user, pw)
-        conn = create_database()
-        most_popular = search_code(g, limit=10)
+        #conn = create_database()
+        most_popular = search_code(g, limit=5)
         for key in most_popular:
             for instance in most_popular[key]:
                 insert_code(instance, conn)
@@ -99,6 +114,13 @@ def index():
         message = str(e)
 
     return render_template('index.html', message=message, code=code)
+
+@app.route('/fp', methods=['POST'])
+def fp():
+    print request.form['id']
+    if mark_fp(request.form['id']):
+        return "marked as FP"
+    return "not marked as FP"
 
 if __name__ == "__main__":
     app.run()
