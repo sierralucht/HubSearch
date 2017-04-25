@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request
 from github import Github
 import sqlite3
 import base64
+from time import sleep
 
 app = Flask(__name__)
 app.secret_key = "changenonononono"
@@ -66,6 +67,7 @@ def search_code(g, limit=500):
                 most_popular[code.repository.stargazers_count + code.repository.watchers] = [code]
             else:
                 most_popular[code.repository.stargazers_count + code.repository.watchers].append(code)
+            sleep(.5)
     except Exception as e:
         print str(e)
         print g.get_rate_limit()
@@ -80,10 +82,11 @@ def search_code(g, limit=500):
 def index():
     user, pw = read_credentials()
     code = []
+    message = ''
     try:
         g = Github(user, pw)
         conn = create_database()
-        most_popular = search_code(g, limit=500)
+        most_popular = search_code(g, limit=300)
         for key in most_popular:
             for instance in most_popular[key]:
                 insert_code(instance, conn)
